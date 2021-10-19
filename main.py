@@ -52,8 +52,60 @@ def decrypt_caesar(ciphertext: str, shift: int = 3) -> str:
     return ''.join(result)
 
 
+def encrypt_vigenere(plaintext: str, keyword: str) -> str:
+    """
+    Encrypts plaintext using a Vigenere cipher.
+
+    >>> encrypt_vigenere("PYTHON", "A")
+    'PYTHON'
+    >>> encrypt_vigenere("python", "a")
+    'python'
+    >>> encrypt_vigenere("ATTACKATDAWN", "LEMON")
+    'LXFOPVEFRNHR'
+    """
+    base = 128 - 32
+    l = len(plaintext)
+    lk = len(keyword)
+    repeatN = l // lk
+    remainder = l % lk
+    fullKey = keyword * repeatN + keyword[: remainder]
+    result = []
+    for idx, val in enumerate(plaintext):
+        key = ord(plaintext[idx]) + ord(fullKey[idx])
+        result.append(chr(key % base + 32))
+    return ''.join(result)
+
+
+def decrypt_vigenere(ciphertext: str, keyword: str) -> str:
+    """
+    Decrypts a ciphertext using a Vigenere cipher.
+
+    >>> decrypt_vigenere("PYTHON", "A")
+    'PYTHON'
+    >>> decrypt_vigenere("python", "a")
+    'python'
+    >>> decrypt_vigenere("LXFOPVEFRNHR", "LEMON")
+    'ATTACKATDAWN'
+    """
+    base = 128 - 32
+    l = len(ciphertext)
+    lk = len(keyword)
+    repeatN = l // lk
+    remainder = l % lk
+    fullKey = keyword * repeatN + keyword[: remainder]
+    result = []
+    for idx, val in enumerate(ciphertext):
+        key = ord(ciphertext[idx]) - 32 - ord(fullKey[idx]) + base
+        result.append(chr(key % base))
+    return ''.join(result)
+
+
 if __name__ == '__main__':
     # x = encrypt_caesar('1@ABCDabcdUuWXYZwxyz')
     x = encrypt_caesar('pYThoN3.8')
     print(x)
     print(decrypt_caesar(x))
+
+    y = encrypt_vigenere('LXFOPVEFRNHR', 'AsEsm')
+    print(y)
+    print(decrypt_vigenere(y, 'AsEsm'))
