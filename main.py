@@ -52,6 +52,40 @@ def decrypt_caesar(ciphertext: str, shift: int = 3) -> str:
     return ''.join(result)
 
 
+def encrypt_vigenere_full(plaintext: str, keyword: str) -> str:
+    base = 128 - 32
+    l = len(plaintext)
+    lk = len(keyword)
+    repeatN = l // lk
+    remainder = l % lk
+    fullKey = keyword * repeatN + keyword[: remainder]
+    result = []
+    for idx, val in enumerate(plaintext):
+        key = ord(plaintext[idx]) + ord(fullKey[idx])
+        result.append(chr(key % base + 32))
+    return ''.join(result)
+
+
+def decrypt_vigenere_full(ciphertext: str, keyword: str) -> str:
+    base = 128 - 32
+    l = len(ciphertext)
+    lk = len(keyword)
+    repeatN = l // lk
+    remainder = l % lk
+    fullKey = keyword * repeatN + keyword[: remainder]
+    result = []
+    for idx, val in enumerate(ciphertext):
+        key = ord(ciphertext[idx]) - 32 - ord(fullKey[idx]) + base
+        result.append(chr(key % base))
+    return ''.join(result)
+
+dictA = [chr(i) for i in range(65, 91)]
+dicta = [chr(i) for i in range(97, 123)]
+dict = dictA + dicta
+
+def findIdx(c):
+    return dict.index(c)
+
 def encrypt_vigenere(plaintext: str, keyword: str) -> str:
     """
     Encrypts plaintext using a Vigenere cipher.
@@ -63,7 +97,7 @@ def encrypt_vigenere(plaintext: str, keyword: str) -> str:
     >>> encrypt_vigenere("ATTACKATDAWN", "LEMON")
     'LXFOPVEFRNHR'
     """
-    base = 128 - 32
+    base = 52
     l = len(plaintext)
     lk = len(keyword)
     repeatN = l // lk
@@ -71,8 +105,8 @@ def encrypt_vigenere(plaintext: str, keyword: str) -> str:
     fullKey = keyword * repeatN + keyword[: remainder]
     result = []
     for idx, val in enumerate(plaintext):
-        key = ord(plaintext[idx]) + ord(fullKey[idx])
-        result.append(chr(key % base + 32))
+        key = findIdx(plaintext[idx]) + findIdx(fullKey[idx])
+        result.append(dict[(key % base)])
     return ''.join(result)
 
 
@@ -87,7 +121,7 @@ def decrypt_vigenere(ciphertext: str, keyword: str) -> str:
     >>> decrypt_vigenere("LXFOPVEFRNHR", "LEMON")
     'ATTACKATDAWN'
     """
-    base = 128 - 32
+    base = 52
     l = len(ciphertext)
     lk = len(keyword)
     repeatN = l // lk
@@ -95,10 +129,9 @@ def decrypt_vigenere(ciphertext: str, keyword: str) -> str:
     fullKey = keyword * repeatN + keyword[: remainder]
     result = []
     for idx, val in enumerate(ciphertext):
-        key = ord(ciphertext[idx]) - 32 - ord(fullKey[idx]) + base
-        result.append(chr(key % base))
+        key = findIdx(ciphertext[idx]) - findIdx(fullKey[idx]) + base
+        result.append(dict[(key % base)])
     return ''.join(result)
-
 
 if __name__ == '__main__':
     # x = encrypt_caesar('1@ABCDabcdUuWXYZwxyz')
@@ -106,6 +139,6 @@ if __name__ == '__main__':
     print(x)
     print(decrypt_caesar(x))
 
-    y = encrypt_vigenere('LXFOPVEFRNHR', 'AsEsm')
+    y = encrypt_vigenere('ATTACKATDAWN', 'LEMON')
     print(y)
-    print(decrypt_vigenere(y, 'AsEsm'))
+    print(decrypt_vigenere(y, 'LEMON'))
